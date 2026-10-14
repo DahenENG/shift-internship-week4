@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zero to Reviewed</title>
+<meta name="description" content="Bringing the Shift Framework Get Started guide from Draft to Reviewed: every command tested end to end against the current release.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f7fb;
+    --surface: #ffffff;
+    --surface-2: #f0effa;
+    --text: #17162b;
+    --muted: #5d5b72;
+    --line: #e3e1ef;
+    --accent: #5b4ae2;
+    --accent-soft: #ece9ff;
+    --ok: #16805a;
+    --ok-soft: #e3f5ec;
+    --warn: #a15c00;
+    --warn-soft: #fff1dc;
+    --shadow: 0 1px 2px rgba(23, 22, 43, .06), 0 8px 24px rgba(23, 22, 43, .06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f0f17;
+      --surface: #171723;
+      --surface-2: #1e1d2e;
+      --text: #ecebf5;
+      --muted: #a3a1b8;
+      --line: #2b2a3d;
+      --accent: #8f82ff;
+      --accent-soft: #25224a;
+      --ok: #4fd39c;
+      --ok-soft: #13301f;
+      --warn: #f2b45c;
+      --warn-soft: #33250f;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f0f17; --surface: #171723; --surface-2: #1e1d2e; --text: #ecebf5; --muted: #a3a1b8;
+    --line: #2b2a3d; --accent: #8f82ff; --accent-soft: #25224a; --ok: #4fd39c; --ok-soft: #13301f;
+    --warn: #f2b45c; --warn-soft: #33250f; --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.6 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code { font: .88em "JetBrains Mono", ui-monospace, Consolas, monospace; background: var(--surface-2); padding: .1em .35em; border-radius: 4px; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+  section { padding: 56px 0; }
+  h1, h2, h3 { line-height: 1.2; margin: 0; }
+  h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; letter-spacing: -.02em; }
+  .eyebrow { font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+  .lead { color: var(--muted); font-size: 1.08rem; max-width: 68ch; margin: 12px 0 0; }
+
+  /* hero */
+  header.hero {
+    background: radial-gradient(1200px 400px at 80% -10%, var(--accent-soft), transparent 70%), var(--bg);
+    border-bottom: 1px solid var(--line);
+    padding: 72px 0 56px;
+  }
+  .hero h1 { font-size: clamp(2.4rem, 7vw, 4.2rem); font-weight: 800; letter-spacing: -.035em; }
+  .hero h1 span { color: var(--accent); }
+  .hero .by { margin-top: 20px; color: var(--muted); font-size: .95rem; }
+  .btns { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 10px; font-weight: 600; font-size: .95rem; border: 1px solid var(--line); background: var(--surface); color: var(--text); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn:hover { text-decoration: none; filter: brightness(1.05); }
+
+  /* stats */
+  .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 40px; }
+  .stat { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; box-shadow: var(--shadow); }
+  .stat b { display: block; font-size: 2rem; font-weight: 800; letter-spacing: -.02em; }
+  .stat span { color: var(--muted); font-size: .88rem; }
+
+  /* video */
+  .video { margin-top: 28px; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow); background: #000; }
+  .video video { display: block; width: 100%; height: auto; }
+  .shots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px; }
+  .shots figure { margin: 0; }
+  .shots img { width: 100%; display: block; border-radius: 10px; border: 1px solid var(--line); }
+  .shots figcaption { font-size: .82rem; color: var(--muted); margin-top: 6px; }
+
+  /* pipeline */
+  .pipe { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: stretch; gap: 12px; margin-top: 32px; }
+  .step { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; box-shadow: var(--shadow); }
+  .step .n { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: .9rem; }
+  .step h3 { font-size: 1.05rem; margin: 12px 0 6px; }
+  .step p { margin: 0; color: var(--muted); font-size: .93rem; }
+  .arrow { align-self: center; color: var(--accent); font-size: 1.5rem; font-weight: 700; }
+
+  /* pages table */
+  .pages { margin-top: 28px; display: grid; gap: 12px; }
+  .page { display: grid; grid-template-columns: 240px 1fr; gap: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+  .page h3 { font-size: 1.05rem; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .chip { font-size: .75rem; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
+  .chip.draft { background: var(--warn-soft); color: var(--warn); }
+  .chip.rev { background: var(--ok-soft); color: var(--ok); }
+  .chip.script { background: var(--surface-2); color: var(--muted); font-family: "JetBrains Mono", monospace; font-weight: 500; }
+  .page ul { margin: 0; padding-left: 18px; color: var(--muted); }
+  .page li { margin: 3px 0; }
+  .page li b { color: var(--text); font-weight: 600; }
+
+  /* bugs */
+  .bugs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 28px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; box-shadow: var(--shadow); }
+  .card h3 { font-size: 1.08rem; margin-bottom: 8px; }
+  .card p { color: var(--muted); margin: 8px 0 0; }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: .9rem; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; }
+  .yes { color: var(--ok); font-weight: 600; }
+  .no { color: var(--warn); font-weight: 600; }
+
+  /* timeline */
+  .timeline { margin-top: 28px; border-left: 2px solid var(--line); padding-left: 24px; display: grid; gap: 22px; }
+  .tl { position: relative; }
+  .tl::before { content: ""; position: absolute; left: -31px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px var(--bg); }
+  .tl b { display: block; }
+  .tl span { color: var(--muted); font-size: .95rem; }
+
+  footer { border-top: 1px solid var(--line); padding: 32px 0 48px; color: var(--muted); font-size: .9rem; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; }
+
+  @media (max-width: 900px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .stats .stat:last-child { grid-column: span 2; }
+    .shots { grid-template-columns: repeat(2, 1fr); }
+    .pipe { grid-template-columns: 1fr; }
+    .arrow { transform: rotate(90deg); justify-self: center; }
+    .page { grid-template-columns: 1fr; gap: 10px; }
+    .bugs { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    section { padding: 40px 0; }
+    header.hero { padding: 48px 0 40px; }
+    th:nth-child(3), td:nth-child(3) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">ShiftSoftware internship · Week 4</div>
+    <h1>Zero to <span>Reviewed</span></h1>
+    <p class="lead">
+      I took the six <b>Get Started</b> pages of the Shift Framework docs and tested every command
+      and claim on them against a real, freshly installed project. Each command shown to readers now
+      comes from a script that runs from an empty folder to a working app, so the guide can't quietly
+      drift away from the framework.
+    </p>
+    <p class="by">Dahen Nawzad · October 2026 · verified against template <code>2026.10.12.1</code></p>
+    <div class="btns">
+      <a class="btn primary" href="#demo">▶ Watch the 5-minute demo</a>
+      <a class="btn" href="https://github.com/ShiftSoftware/ShiftFrameworkDocumentation/pull/3">Docs pull request #3</a>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b>6</b><span>Get Started pages at Reviewed</span></div>
+      <div class="stat"><b>5</b><span>verification scripts</span></div>
+      <div class="stat"><b>52</b><span>automated checks, 0 failing</span></div>
+      <div class="stat"><b>2</b><span>template bugs found</span></div>
+      <div class="stat"><b>~5 min</b><span>empty folder → running app</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="demo">
+    <div class="wrap">
+      <div class="eyebrow">Demo</div>
+      <h2>From an empty folder to a running app</h2>
+      <p class="lead">
+        Following the Get Started pages exactly: install check, scaffold the project, build, point it at
+        LocalDB, create the database, run it, sign in and save a record.
+      </p>
+      <div class="video">
+        <video controls preload="metadata" poster="assets/poster.jpg">
+          <source src="assets/zero-to-running-app.mp4" type="video/mp4">
+          Your browser can't play this video. <a href="assets/zero-to-running-app.mp4">Download it</a>.
+        </video>
+      </div>
+      <div class="shots">
+        <figure><img src="assets/build.jpg" alt="Terminal: build succeeded with 0 errors" loading="lazy"><figcaption>Build: 0 errors</figcaption></figure>
+        <figure><img src="assets/settings.jpg" alt="VS Code: LocalDB connection string and Cosmos DB switched off" loading="lazy"><figcaption>LocalDB + Cosmos DB off</figcaption></figure>
+        <figure><img src="assets/login.jpg" alt="Sign-in page of the generated app" loading="lazy"><figcaption>Sign in with the seeded admin</figcaption></figure>
+        <figure><img src="assets/list.jpg" alt="Brand list with the new brand saved" loading="lazy"><figcaption>Saved to the database</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section style="background: var(--surface); border-block: 1px solid var(--line);">
+    <div class="wrap">
+      <div class="eyebrow">How it works</div>
+      <h2>The docs only show what a script has run</h2>
+      <p class="lead">
+        A page can't be marked Reviewed on trust. The commands live in a script, the script runs
+        end to end, and the page displays the exact text of the script.
+      </p>
+      <div class="pipe">
+        <div class="step">
+          <div class="n">1</div>
+          <h3>Script</h3>
+          <p>A bash script in <code>Docs.Verify/Scripts</code> runs every command from the page in a clean folder and checks the result: files, builds, ports, database rows, HTTP responses.</p>
+        </div>
+        <div class="arrow">→</div>
+        <div class="step">
+          <div class="n">2</div>
+          <h3>Snippet</h3>
+          <p><code>Docs.SnippetGen</code> cuts marked regions out of the scripts at build time and warns when a page was tested against an older release.</p>
+        </div>
+        <div class="arrow">→</div>
+        <div class="step">
+          <div class="n">3</div>
+          <h3>Page</h3>
+          <p>The page renders the snippet, not hand-typed text, and carries a <b>Reviewed</b> chip with the release it was last verified against.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="eyebrow">Page by page</div>
+      <h2>What checking each page found</h2>
+      <div class="pages">
+        <div class="page">
+          <div><h3>What is Shift Framework?</h3><div class="chips"><span class="chip draft">Draft</span><span class="chip rev">→ Reviewed</span></div></div>
+          <ul>
+            <li>Fact-checked against a fresh project and the framework repos.</li>
+            <li><b>Wrong DTO convention</b>: the page said View / List / Upsert; projects actually use a form DTO and a list DTO.</li>
+            <li><b>ShiftMapper was missing</b>, although every generated project uses it.</li>
+          </ul>
+        </div>
+        <div class="page">
+          <div><h3>Installation</h3><div class="chips"><span class="chip rev">Re-verified</span><span class="chip script">install-and-scaffold.sh</span></div></div>
+          <ul>
+            <li>Visual Studio requirement updated to 2026 for .NET 10.</li>
+            <li>"A clean build" → <b>0 errors</b>, plus a note that a fresh project shows a few dozen expected ShiftMapper warnings.</li>
+            <li>A "next page" link pointed to the wrong page; the upgrade tip was clarified.</li>
+          </ul>
+        </div>
+        <div class="page">
+          <div><h3>Template parameters</h3><div class="chips"><span class="chip draft">Draft</span><span class="chip rev">→ Reviewed</span><span class="chip script">template-parameters.sh · 13 checks</span></div></div>
+          <ul>
+            <li>Builds every combination of the two required parameters, and found <b>two that didn't build</b> (see below).</li>
+            <li>Identity URL defaults and the file they land in were wrong on the page.</li>
+            <li><code>--addTest</code> uses a real SQL Server Express database, not an in-memory one.</li>
+          </ul>
+        </div>
+        <div class="page">
+          <div><h3>Project tour</h3><div class="chips"><span class="chip draft">Draft</span><span class="chip rev">→ Reviewed</span><span class="chip script">project-tour.sh · 23 checks</span></div></div>
+          <ul>
+            <li>The architecture diagram showed a simple stack; the <b>real project references</b> are different (the API hosts the web app).</li>
+            <li>Permission checks happen in the endpoints, not the repository; the request walkthrough was rewritten for the real code.</li>
+            <li>Updated again for 2026.10.12.1, which no longer generates two folders the page described.</li>
+          </ul>
+        </div>
+        <div class="page">
+          <div><h3>Run the generated sample</h3><div class="chips"><span class="chip draft">Draft</span><span class="chip rev">→ Reviewed</span><span class="chip script">run-sample.sh · 7 checks</span></div></div>
+          <ul>
+            <li>A new project has Cosmos DB switched on: without the emulator it prints red errors. <b>New section</b> shows how to switch it off.</li>
+            <li>Removed a claim that the app checks migrations on start (nothing does).</li>
+            <li>The port is random per project, and the troubleshooting error message now matches the real one.</li>
+          </ul>
+        </div>
+        <div class="page">
+          <div><h3>Your first entity</h3><div class="chips"><span class="chip draft">Draft</span><span class="chip rev">→ Reviewed</span><span class="chip script">add-first-entity.sh · 9 checks</span></div></div>
+          <ul>
+            <li>The tutorial's first command <b>failed</b>: the sample already has a <code>Vehicle</code>. The tutorial now builds a <code>Warehouse</code>.</li>
+            <li>The generator creates 8 files, not 9, and its form starts empty. Added a step for form fields and list columns.</li>
+            <li>The script scaffolds, migrates, signs in and saves a record through the API, then cleans up after itself.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background: var(--surface); border-block: 1px solid var(--line);">
+    <div class="wrap">
+      <div class="eyebrow">Bugs found</div>
+      <h2>Testing the docs tested the framework</h2>
+      <div class="bugs">
+        <div class="card">
+          <h3>Two template combinations didn't build</h3>
+          <table>
+            <thead><tr><th>Combination</th><th>2026.10.10.2</th><th>2026.10.12.1</th></tr></thead>
+            <tbody>
+              <tr><td>sample + Internal (default)</td><td class="yes">builds</td><td class="yes">builds</td></tr>
+              <tr><td>no sample + Internal</td><td class="no">CS0103</td><td class="yes">builds</td></tr>
+              <tr><td>External identity</td><td class="no">CS0234</td><td class="yes">builds</td></tr>
+            </tbody>
+          </table>
+          <p>
+            I traced both errors and sent a fix in
+            <a href="https://github.com/ShiftSoftware/ShiftTemplates/pull/13">ShiftTemplates #13</a>.
+            The team then fixed it upstream in their own way; on 2026.10.12.1 every combination builds, so I
+            closed my PR and changed the docs and script to check that they keep building.
+          </p>
+        </div>
+        <div class="card">
+          <h3>A tutorial that couldn't run as written</h3>
+          <p>
+            "Your first entity" told readers to generate a <code>Vehicle</code>, but the sample app already has one,
+            so the command stops with <i>"Creating this template will make changes to existing files"</i>.
+            The old check script hid this by deleting the sample's files before running.
+          </p>
+          <p>
+            The tutorial now uses a new <code>Warehouse</code> entity, and the script proves the whole path:
+            generate, add fields, migrate, sign in, create a warehouse through the API and see it in the list.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="eyebrow">Timeline</div>
+      <h2>Week 4</h2>
+      <div class="timeline">
+        <div class="tl"><b>Day 16 · What is Shift Framework? + Installation</b><span>Fact-checked and re-verified; first two pages Reviewed.</span></div>
+        <div class="tl"><b>Day 17 · Template parameters + Project tour</b><span>New check scripts; found the two template combinations that didn't build and fixed them in a PR.</span></div>
+        <div class="tl"><b>Day 18 · Run the sample + Your first entity</b><span>All six pages Reviewed; five scripts pass in order from an empty folder; pull requests opened.</span></div>
+        <div class="tl"><b>Day 19 · Demo video</b><span>A recorded run of the guide from an empty folder to a saved record.</span></div>
+        <div class="tl"><b>Day 20 · New release, landing page, walkthrough</b><span>Re-verified everything on 2026.10.12.1 (52 checks, 0 failing), updated the docs PR, and built this page.</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Dahen Nawzad · <a href="https://github.com/DahenENG">github.com/DahenENG</a></span>
+    <span>
+      <a href="https://github.com/ShiftSoftware/ShiftFrameworkDocumentation/pull/3">Docs PR #3</a> ·
+      <a href="https://github.com/ShiftSoftware/ShiftTemplates/pull/13">Template PR #13</a> ·
+      <a href="https://docs.shift.software">docs.shift.software</a>
+    </span>
+  </div>
+</footer>
+
+</body>
+</html>
