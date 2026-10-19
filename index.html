@@ -91,7 +91,7 @@
   .video video { display: block; width: 100%; height: auto; }
   .shots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px; }
   .shots figure { margin: 0; }
-  .shots img { width: 100%; display: block; border-radius: 10px; border: 1px solid var(--line); }
+  .shots img { width: 100%; aspect-ratio: 16 / 10; object-fit: contain; background: #1e1e1e; display: block; border-radius: 10px; border: 1px solid var(--line); }
   .shots figcaption { font-size: .82rem; color: var(--muted); margin-top: 6px; }
 
   /* pipeline */
@@ -116,10 +116,12 @@
   .page li b { color: var(--text); font-weight: 600; }
 
   /* bugs */
-  .bugs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 28px; }
+  .bugs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; margin-top: 28px; }
   .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; box-shadow: var(--shadow); }
   .card h3 { font-size: 1.08rem; margin-bottom: 8px; }
   .card p { color: var(--muted); margin: 8px 0 0; }
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 12px; }
+  .table-scroll table { margin-top: 0; min-width: 420px; }
   table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: .9rem; }
   th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
   th { color: var(--muted); font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; }
@@ -133,6 +135,26 @@
   .tl b { display: block; }
   .tl span { color: var(--muted); font-size: .95rem; }
 
+  /* shipped PRs */
+  .prs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 28px; }
+  .pr { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 8px; }
+  .pr .repo { font: 500 .8rem "JetBrains Mono", ui-monospace, monospace; color: var(--muted); }
+  .pr h3 { font-size: 1rem; }
+  .pr p { margin: 0; color: var(--muted); font-size: .92rem; flex: 1; }
+  .chip.open { background: var(--accent-soft); color: var(--accent); }
+  .chip.closed { background: var(--surface-2); color: var(--muted); }
+  .docs-list { margin: 20px 0 0; padding-left: 20px; }
+  .docs-list li { margin: 8px 0; }
+  .next { margin: 20px 0 0; padding-left: 20px; }
+  .next li { margin: 8px 0; }
+  details.transcript { margin-top: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; }
+  details.transcript summary { cursor: pointer; font-weight: 600; }
+  details.transcript ol { margin: 10px 0 0; padding-left: 0; list-style: none; color: var(--muted); font-size: .93rem; }
+  details.transcript li { margin: 4px 0; }
+  details.transcript time { display: inline-block; min-width: 3.2em; font: 500 .85rem "JetBrains Mono", ui-monospace, monospace; color: var(--text); }
+  @media (max-width: 900px) { .prs { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .prs { grid-template-columns: 1fr; } }
+
   footer { border-top: 1px solid var(--line); padding: 32px 0 48px; color: var(--muted); font-size: .9rem; }
   footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; }
 
@@ -143,12 +165,11 @@
     .pipe { grid-template-columns: 1fr; }
     .arrow { transform: rotate(90deg); justify-self: center; }
     .page { grid-template-columns: 1fr; gap: 10px; }
-    .bugs { grid-template-columns: 1fr; }
+    .bugs { grid-template-columns: minmax(0, 1fr); }
   }
   @media (max-width: 480px) {
     section { padding: 40px 0; }
     header.hero { padding: 48px 0 40px; }
-    th:nth-child(3), td:nth-child(3) { display: none; }
   }
 </style>
 </head>
@@ -159,31 +180,109 @@
     <div class="eyebrow">ShiftSoftware internship · Week 4</div>
     <h1>Zero to <span>Reviewed</span></h1>
     <p class="lead">
-      I took the six <b>Get Started</b> pages of the Shift Framework docs and tested every command
-      and claim on them against a real, freshly installed project. Each command shown to readers now
-      comes from a script that runs from an empty folder to a working app, so the guide can't quietly
-      drift away from the framework.
+      I tested every command and claim on the six <b>Get Started</b> pages of the Shift Framework docs
+      against a freshly installed project. Each command shown to readers now comes from a script that runs
+      from an empty folder to a working app, so every page can be re-checked by a script. The scripts are
+      run by hand for now; there is no CI yet.
     </p>
-    <p class="by">Dahen Nawzad · October 2026 · verified against template <code>2026.10.12.1</code></p>
+    <p class="by">Dahen Nawzad · October 2026 · re-verified on 19 October against template <code>2026.10.15.1</code></p>
     <div class="btns">
       <a class="btn primary" href="#demo">▶ Watch the 5-minute demo</a>
-      <a class="btn" href="https://github.com/ShiftSoftware/ShiftFrameworkDocumentation/pull/3">Docs pull request #3</a>
+      <a class="btn" href="#shipped">What I shipped</a>
+      <a class="btn" href="https://github.com/ShiftSoftware/ShiftFrameworkDocumentation/pull/3">Docs pull request #3 (open)</a>
     </div>
 
     <div class="stats">
-      <div class="stat"><b>6</b><span>Get Started pages at Reviewed</span></div>
+      <div class="stat"><b>6</b><span>Get Started pages Reviewed in Docs PR #3 (open, not merged)</span></div>
       <div class="stat"><b>5</b><span>verification scripts</span></div>
-      <div class="stat"><b>52</b><span>automated checks, 0 failing</span></div>
-      <div class="stat"><b>2</b><span>template bugs found</span></div>
+      <div class="stat"><b>52</b><span>script checks, 0 failing</span></div>
+      <div class="stat"><b>2</b><span>template bugs: 3 of 4 combinations didn't build</span></div>
       <div class="stat"><b>~5 min</b><span>empty folder → running app</span></div>
     </div>
   </div>
 </header>
 
 <main>
+  <section id="shipped">
+    <div class="wrap">
+      <div class="eyebrow">What I shipped</div>
+      <h2>Pull requests</h2>
+      <p class="lead">Nine pull requests to Shift Software repos. None is merged yet.</p>
+      <div class="prs">
+        <div class="pr">
+          <span class="repo">ShiftTemplates #9</span>
+          <h3><a href="https://github.com/ShiftSoftware/ShiftTemplates/pull/9">Map Vehicle automatically through ShiftMapper</a></h3>
+          <p>Removes Vehicle's four hand-written mapping methods; the write map keeps the audit fields server-owned.</p>
+          <div class="chips"><span class="chip open">open, not merged</span></div>
+        </div>
+        <div class="pr">
+          <span class="repo">ShiftTemplates #10</span>
+          <h3><a href="https://github.com/ShiftSoftware/ShiftTemplates/pull/10">Car with its own TypeAuth action</a></h3>
+          <p>Tests that the API itself answers 403 when a user without Read, Write or Delete access tries those actions.</p>
+          <div class="chips"><span class="chip open">open, not merged</span></div>
+        </div>
+        <div class="pr">
+          <span class="repo">ShiftTemplates #11</span>
+          <h3><a href="https://github.com/ShiftSoftware/ShiftTemplates/pull/11">Side-by-side form samples</a></h3>
+          <p>Two legacy forms on one page share one record and can save it under the wrong key; the samples show the bug and the fix.</p>
+          <div class="chips"><span class="chip open">open, not merged</span></div>
+        </div>
+        <div class="pr">
+          <span class="repo">ShiftTemplates #12</span>
+          <h3><a href="https://github.com/ShiftSoftware/ShiftTemplates/pull/12">Demo ShiftBanners in the sample</a></h3>
+          <p>Rule-driven banners in the sample app. Waits for ShiftBlazor #3.</p>
+          <div class="chips"><span class="chip open">open, not merged</span></div>
+        </div>
+        <div class="pr">
+          <span class="repo">ShiftTemplates #13</span>
+          <h3><a href="https://github.com/ShiftSoftware/ShiftTemplates/pull/13">Make the template build without the sample and with external identity</a></h3>
+          <p>Fixed the two template bugs below. Closed because the team fixed them upstream first.</p>
+          <div class="chips"><span class="chip closed">closed, not merged</span></div>
+        </div>
+        <div class="pr">
+          <span class="repo">ShiftBlazor #3</span>
+          <h3><a href="https://github.com/ShiftSoftware/ShiftBlazor/pull/3">ShiftBanners: banners from a rules file</a></h3>
+          <p>Warning banners chosen per page, permission and language from a JSON file, with no code change per banner.</p>
+          <div class="chips"><span class="chip open">open, not merged</span></div>
+        </div>
+        <div class="pr">
+          <span class="repo">ShiftFrameworkDocumentation #1</span>
+          <h3><a href="https://github.com/ShiftSoftware/ShiftFrameworkDocumentation/pull/1">ShiftEntityForm page (Draft)</a></h3>
+          <p>How the form loads, saves and deletes a record, its modes, permissions and context, checked against the source.</p>
+          <div class="chips"><span class="chip open">open, not merged</span></div>
+        </div>
+        <div class="pr">
+          <span class="repo">ShiftFrameworkDocumentation #2</span>
+          <h3><a href="https://github.com/ShiftSoftware/ShiftFrameworkDocumentation/pull/2">Concurrency guide (Draft)</a></h3>
+          <p>What the LastSaveDate check does and doesn't do, built on the three Week 3 incidents, with a resumable sync recipe.</p>
+          <div class="chips"><span class="chip open">open, not merged</span></div>
+        </div>
+        <div class="pr">
+          <span class="repo">ShiftFrameworkDocumentation #3</span>
+          <h3><a href="https://github.com/ShiftSoftware/ShiftFrameworkDocumentation/pull/3">Get Started pages to Reviewed</a></h3>
+          <p>The six pages on this page. They show as Draft on docs.shift.software until this PR is merged.</p>
+          <div class="chips"><span class="chip open">open, not merged</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background: var(--surface); border-block: 1px solid var(--line);">
+    <div class="wrap">
+      <div class="eyebrow">Docs I wrote</div>
+      <h2>Documentation pages</h2>
+      <p class="lead">All three are in open pull requests, so they aren't on docs.shift.software yet.</p>
+      <ul class="docs-list">
+        <li><a href="https://github.com/ShiftSoftware/ShiftFrameworkDocumentation/pull/1"><b>ShiftEntityForm</b></a> (Components, Draft): Docs #1</li>
+        <li><a href="https://github.com/ShiftSoftware/ShiftFrameworkDocumentation/pull/2"><b>Concurrency in Shift Framework</b></a> (Guides, Draft): Docs #2</li>
+        <li><a href="https://github.com/ShiftSoftware/ShiftFrameworkDocumentation/pull/3"><b>Get Started</b>, six pages</a>: Reviewed in Docs #3 (open)</li>
+      </ul>
+    </div>
+  </section>
+
   <section id="demo">
     <div class="wrap">
-      <div class="eyebrow">Demo</div>
+      <div class="eyebrow">The flagship: Zero to Reviewed</div>
       <h2>From an empty folder to a running app</h2>
       <p class="lead">
         Following the Get Started pages exactly: install check, scaffold the project, build, point it at
@@ -195,8 +294,30 @@
           Your browser can't play this video. <a href="assets/zero-to-running-app.mp4">Download it</a>.
         </video>
       </div>
+      <details class="transcript">
+        <summary>Transcript (the video has no voice; these are its captions)</summary>
+        <ol>
+          <li><time>0:00</time> Shift Framework - Get Started: from an empty folder to a running app</li>
+          <li><time>0:05</time> 1. The .NET 10 SDK is installed</li>
+          <li><time>0:14</time> 2. The Shift Framework templates are installed (release 2026.10.10.2)</li>
+          <li><time>0:24</time> 3. Create a project: sample app + identity server hosted inside the app</li>
+          <li><time>1:02</time> 4. Build: 0 errors (the ShiftMapper warnings are expected)</li>
+          <li><time>1:23</time> 5. Open the API settings to point the app at a database</li>
+          <li><time>1:40</time> 6. Use LocalDB. In JSON the backslash must be written twice</li>
+          <li><time>1:49</time> 7. No Cosmos DB emulator on this machine, so switch Cosmos DB off</li>
+          <li><time>1:58</time> 8. The template ships without migrations, so create the first one</li>
+          <li><time>2:42</time> 9. Create the database and all the tables</li>
+          <li><time>3:21</time> 10. Run the API project. It also serves the Blazor web app</li>
+          <li><time>3:44</time> 11. Open the app (the port is random for every project: 5071)</li>
+          <li><time>4:07</time> 12. Sign in with the seeded admin user: SuperUser / OneTwo</li>
+          <li><time>4:20</time> 13. Products &gt; Brands: the sample app's brand list</li>
+          <li><time>4:29</time> 14. Add a brand</li>
+          <li><time>4:51</time> 15. "Item has been Created": saved to the database</li>
+          <li><time>5:02</time> Every step is checked by a Docs.Verify script. Six Get Started pages: Reviewed in Docs PR #3 (open)</li>
+        </ol>
+      </details>
       <div class="shots">
-        <figure><img src="assets/build.jpg" alt="Terminal: build succeeded with 0 errors" loading="lazy"><figcaption>Build: 0 errors</figcaption></figure>
+        <figure><img src="assets/build.jpg" alt="Terminal: build succeeded with 0 errors and 38 warnings" loading="lazy"><figcaption>Build: 0 errors, 38 warnings</figcaption></figure>
         <figure><img src="assets/settings.jpg" alt="VS Code: LocalDB connection string and Cosmos DB switched off" loading="lazy"><figcaption>LocalDB + Cosmos DB off</figcaption></figure>
         <figure><img src="assets/login.jpg" alt="Sign-in page of the generated app" loading="lazy"><figcaption>Sign in with the seeded admin</figcaption></figure>
         <figure><img src="assets/list.jpg" alt="Brand list with the new brand saved" loading="lazy"><figcaption>Saved to the database</figcaption></figure>
@@ -207,10 +328,10 @@
   <section style="background: var(--surface); border-block: 1px solid var(--line);">
     <div class="wrap">
       <div class="eyebrow">How it works</div>
-      <h2>The docs only show what a script has run</h2>
+      <h2>How a page is checked</h2>
       <p class="lead">
-        A page can't be marked Reviewed on trust. The commands live in a script, the script runs
-        end to end, and the page displays the exact text of the script.
+        The commands live in a script, the script runs end to end, and the page displays the exact
+        text of the script.
       </p>
       <div class="pipe">
         <div class="step">
@@ -240,7 +361,7 @@
       <h2>What checking each page found</h2>
       <div class="pages">
         <div class="page">
-          <div><h3>What is Shift Framework?</h3><div class="chips"><span class="chip draft">Draft</span><span class="chip rev">→ Reviewed</span></div></div>
+          <div><h3>What is Shift Framework?</h3><div class="chips"><span class="chip draft">Draft</span><span class="chip rev">Reviewed in PR #3 (open)</span></div></div>
           <ul>
             <li>Fact-checked against a fresh project and the framework repos.</li>
             <li><b>Wrong DTO convention</b>: the page said View / List / Upsert; projects actually use a form DTO and a list DTO.</li>
@@ -256,15 +377,15 @@
           </ul>
         </div>
         <div class="page">
-          <div><h3>Template parameters</h3><div class="chips"><span class="chip draft">Draft</span><span class="chip rev">→ Reviewed</span><span class="chip script">template-parameters.sh · 13 checks</span></div></div>
+          <div><h3>Template parameters</h3><div class="chips"><span class="chip draft">Draft</span><span class="chip rev">Reviewed in PR #3 (open)</span><span class="chip script">template-parameters.sh · 13 checks</span></div></div>
           <ul>
-            <li>Builds every combination of the two required parameters, and found <b>two that didn't build</b> (see below).</li>
+            <li>Builds every combination of the two required parameters, and found <b>three of four that didn't build</b>, from two bugs (see below).</li>
             <li>Identity URL defaults and the file they land in were wrong on the page.</li>
             <li><code>--addTest</code> uses a real SQL Server Express database, not an in-memory one.</li>
           </ul>
         </div>
         <div class="page">
-          <div><h3>Project tour</h3><div class="chips"><span class="chip draft">Draft</span><span class="chip rev">→ Reviewed</span><span class="chip script">project-tour.sh · 23 checks</span></div></div>
+          <div><h3>Project tour</h3><div class="chips"><span class="chip draft">Draft</span><span class="chip rev">Reviewed in PR #3 (open)</span><span class="chip script">project-tour.sh · 23 checks</span></div></div>
           <ul>
             <li>The architecture diagram showed a simple stack; the <b>real project references</b> are different (the API hosts the web app).</li>
             <li>Permission checks happen in the endpoints, not the repository; the request walkthrough was rewritten for the real code.</li>
@@ -272,7 +393,7 @@
           </ul>
         </div>
         <div class="page">
-          <div><h3>Run the generated sample</h3><div class="chips"><span class="chip draft">Draft</span><span class="chip rev">→ Reviewed</span><span class="chip script">run-sample.sh · 7 checks</span></div></div>
+          <div><h3>Run the generated sample</h3><div class="chips"><span class="chip draft">Draft</span><span class="chip rev">Reviewed in PR #3 (open)</span><span class="chip script">run-sample.sh · 7 checks</span></div></div>
           <ul>
             <li>A new project has Cosmos DB switched on: without the emulator it prints red errors. <b>New section</b> shows how to switch it off.</li>
             <li>Removed a claim that the app checks migrations on start (nothing does).</li>
@@ -280,7 +401,7 @@
           </ul>
         </div>
         <div class="page">
-          <div><h3>Your first entity</h3><div class="chips"><span class="chip draft">Draft</span><span class="chip rev">→ Reviewed</span><span class="chip script">add-first-entity.sh · 9 checks</span></div></div>
+          <div><h3>Your first entity</h3><div class="chips"><span class="chip draft">Draft</span><span class="chip rev">Reviewed in PR #3 (open)</span><span class="chip script">add-first-entity.sh · 9 checks</span></div></div>
           <ul>
             <li>The tutorial's first command <b>failed</b>: the sample already has a <code>Vehicle</code>. The tutorial now builds a <code>Warehouse</code>.</li>
             <li>The generator creates 8 files, not 9, and its form starts empty. Added a step for form fields and list columns.</li>
@@ -294,23 +415,28 @@
   <section style="background: var(--surface); border-block: 1px solid var(--line);">
     <div class="wrap">
       <div class="eyebrow">Bugs found</div>
-      <h2>Testing the docs tested the framework</h2>
+      <h2>Bugs found while checking the pages</h2>
       <div class="bugs">
         <div class="card">
-          <h3>Two template combinations didn't build</h3>
+          <h3>Two template bugs: three of four combinations didn't build</h3>
+          <div class="table-scroll">
           <table>
-            <thead><tr><th>Combination</th><th>2026.10.10.2</th><th>2026.10.12.1</th></tr></thead>
+            <thead><tr><th>Combination</th><th>2026.10.10.2</th><th>2026.10.15.1</th></tr></thead>
             <tbody>
               <tr><td>sample + Internal (default)</td><td class="yes">builds</td><td class="yes">builds</td></tr>
               <tr><td>no sample + Internal</td><td class="no">CS0103</td><td class="yes">builds</td></tr>
-              <tr><td>External identity</td><td class="no">CS0234</td><td class="yes">builds</td></tr>
+              <tr><td>sample + External</td><td class="no">CS0234</td><td class="yes">builds</td></tr>
+              <tr><td>no sample + External</td><td class="no">CS0234</td><td class="yes">builds</td></tr>
             </tbody>
           </table>
+          </div>
           <p>
-            I traced both errors and sent a fix in
-            <a href="https://github.com/ShiftSoftware/ShiftTemplates/pull/13">ShiftTemplates #13</a>.
-            The team then fixed it upstream in their own way; on 2026.10.12.1 every combination builds, so I
-            closed my PR and changed the docs and script to check that they keep building.
+            Two causes: without the sample, the menu (<code>Shared/NavMenu.razor</code>) still referred to
+            <code>ShiftIdentityActions</code>, which wasn't there (CS0103); with External identity, a development
+            page used the identity dashboard's layout, which External doesn't reference (CS0234). I sent a fix in
+            <a href="https://github.com/ShiftSoftware/ShiftTemplates/pull/13">ShiftTemplates #13</a>, which was
+            closed because the team fixed it upstream first. All four combinations were rebuilt on both
+            releases on 19 October, and the Template parameters script now requires them to build.
           </p>
         </div>
         <div class="card">
@@ -334,12 +460,26 @@
       <div class="eyebrow">Timeline</div>
       <h2>Week 4</h2>
       <div class="timeline">
-        <div class="tl"><b>Day 16 · What is Shift Framework? + Installation</b><span>Fact-checked and re-verified; first two pages Reviewed.</span></div>
-        <div class="tl"><b>Day 17 · Template parameters + Project tour</b><span>New check scripts; found the two template combinations that didn't build and fixed them in a PR.</span></div>
-        <div class="tl"><b>Day 18 · Run the sample + Your first entity</b><span>All six pages Reviewed; five scripts pass in order from an empty folder; pull requests opened.</span></div>
+        <div class="tl"><b>Day 16 · What is Shift Framework? + Installation</b><span>Fact-checked and re-verified; first two pages Reviewed (in Docs PR #3).</span></div>
+        <div class="tl"><b>Day 17 · Template parameters + Project tour</b><span>New check scripts; found two template bugs (three of four combinations didn't build) and sent a fix in ShiftTemplates #13, which was closed because the team fixed it upstream first.</span></div>
+        <div class="tl"><b>Day 18 · Run the sample + Your first entity</b><span>All six pages Reviewed in Docs PR #3 (open); five scripts pass from an empty folder.</span></div>
         <div class="tl"><b>Day 19 · Demo video</b><span>A recorded run of the guide from an empty folder to a saved record.</span></div>
         <div class="tl"><b>Day 20 · New release, landing page, walkthrough</b><span>Re-verified everything on 2026.10.12.1 (52 checks, 0 failing), updated the docs PR, and built this page.</span></div>
+        <div class="tl"><b>19 October · Review fixes</b><span>Answered the review on all eight open PRs. Re-verified Get Started on 2026.10.15.1 (52 checks, 0 failing), and made the scripts work in any order after the first one.</span></div>
       </div>
+    </div>
+  </section>
+
+  <section style="background: var(--surface); border-block: 1px solid var(--line);">
+    <div class="wrap">
+      <div class="eyebrow">What I'd do next</div>
+      <h2>Next steps</h2>
+      <ul class="next">
+        <li><b>Run the Docs.Verify scripts in CI</b> on every docs pull request, so the pages are re-checked automatically instead of by hand.</li>
+        <li><b>Bring the next page to Reviewed:</b> Guides › Data-level access is still verified against 2026.09.08.3.</li>
+        <li><b>Structured conflict handling</b> (Week 4's Flagship A): a 409 that says which fields collided, and a merge dialog in the form, for the weaknesses the Week 3 incidents showed.</li>
+        <li><b>Finish the open pull requests</b> through review until they're merged or closed.</li>
+      </ul>
     </div>
   </section>
 </main>
@@ -349,7 +489,7 @@
     <span>Dahen Nawzad · <a href="https://github.com/DahenENG">github.com/DahenENG</a></span>
     <span>
       <a href="https://github.com/ShiftSoftware/ShiftFrameworkDocumentation/pull/3">Docs PR #3</a> ·
-      <a href="https://github.com/ShiftSoftware/ShiftTemplates/pull/13">Template PR #13</a> ·
+      <a href="#shipped">All pull requests</a> ·
       <a href="https://docs.shift.software">docs.shift.software</a>
     </span>
   </div>
